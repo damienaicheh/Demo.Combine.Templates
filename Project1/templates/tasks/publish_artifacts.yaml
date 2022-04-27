@@ -1,0 +1,14 @@
+parameters:
+- name: artifactName
+  type: string
+  default: ''
+
+steps: 
+  - script: dotnet publish demo.csproj -c Release --no-restore --output $(Build.ArtifactStagingDirectory)
+    displayName: Publish package
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts to Azure DevOps'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: '${{ parameters.artifactName }}'

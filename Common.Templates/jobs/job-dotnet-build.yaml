@@ -1,0 +1,34 @@
+parameters:
+- name: preBuildSteps
+  type: object
+  default: []
+- name: buildConfiguration
+  type: string
+  default: Release
+- name: postBuildSteps
+  type: object
+  default: []
+
+jobs:
+- job: Build
+  displayName: 'Build dotnet project'
+  
+  steps:
+    - task: UseDotNet@2
+      displayName: Install dotnet
+      inputs:
+        version: 6.0.x
+        includePreviewVersions: false
+
+    - task: NuGetToolInstaller@1
+      displayName: Install Nuget tool
+
+    - script: dotnet restore
+      displayName: Restore package
+
+    - ${{ parameters.preBuildSteps }}
+
+    - script: dotnet build -c ${{ parameters.buildConfiguration }} --no-restore
+      displayName: Build
+    
+    - ${{ parameters.postBuildSteps }}

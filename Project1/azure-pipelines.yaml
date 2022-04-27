@@ -1,0 +1,21 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Common.Template
+      ref: refs/heads/main
+
+stages:
+- stage:
+  jobs:
+    - template: jobs/job-dotnet-build.yaml@templates
+      parameters:
+        postBuildSteps:
+            - template: templates/tasks/publish_artifacts.yaml@self
+              parameters:
+                artifactName: 'drop'
